@@ -134,7 +134,6 @@ def Runurl_in1(url, delay=0):
     code = url.split("/")[-1]
     final_url = f"{DOMAIN}/{code}"
     ref = "https://loan.newsaddapro.in/"
-    ref = referurl
     h = {"referer": ref}
     resp = client.get(final_url, headers=h)
     soup = BeautifulSoup(resp.content, "html.parser")
@@ -211,7 +210,6 @@ def Seturl_in1(url, delay=0):
     code = url.split("/")[-1]
     final_url = f"{DOMAIN}/{code}"
     ref = "https://loan.techzed.in/"
-    ref = referurl
     h = {"referer": ref}
     resp = client.get(final_url, headers=h)
     soup = BeautifulSoup(resp.content, "html.parser")
