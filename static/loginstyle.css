@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.form-box {
+    background-color: #000000;
+    padding: 2.5rem;
+    border-radius: 30px;
+    width: 100%;
+    position: relative;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+
+.form-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    margin: -1px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2e6af6, #b054ff);
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+.input-box {
+    margin-bottom: 1.5rem;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 16px 20px;
+    background-color: #080810;
+    color: white;
+    border: 1px solid rgba(40, 40, 60, 0.5);
+    border-radius: 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-box input:focus {
+    outline: none;
+    border-color: rgba(80, 80, 150, 0.8);
+}
+
+.input-box input::placeholder {
+    color: rgba(200, 200, 255, 0.6);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: #008080;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.2rem;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.submit-btn:active {
+    transform: translateY(1px);
+}
+
+.form-link {
+    text-align: center;
+}
+
+.form-link a {
+    color: #4d68ff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.form-link a:hover {
+    text-decoration: underline;
+    color: #7747ff;
+}
+
+.message-box {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
+
+.message-box.error {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    display: block;
+}
+
+.message-box.success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #75ff75;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    display: block;
+} 

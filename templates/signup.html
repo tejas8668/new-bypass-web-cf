@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - URL Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/loginstyle.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Sign Up</h1>
+            <div class="message-box" id="message-box"></div>
+            <form id="signupForm">
+                <div class="input-box">
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-box">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Account</button>
+            </form>
+            <div class="form-link">
+                <p>Already have an account? <a href="#" id="login-link">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/login';
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const messageBox = document.getElementById('message-box');
+            
+            if (password !== confirmPassword) {
+                messageBox.textContent = 'Passwords do not match';
+                messageBox.className = 'message-box error';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageBox.textContent = 'Account created successfully! Redirecting to login...';
+                    messageBox.className = 'message-box success';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    messageBox.textContent = data.message || 'Sign up failed. Please try again.';
+                    messageBox.className = 'message-box error';
+                }
+            } catch (error) {
+                messageBox.textContent = 'An error occurred. Please try again.';
+                messageBox.className = 'message-box error';
+            }
+        });
+    </script>
+</body>
+</html> 

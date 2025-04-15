@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            background-color: #000000;
+            padding: 2.5rem;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            border: 1px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+            margin: -1px;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #2e6af6, #b054ff);
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            background-color: #080810;
+            color: white;
+            border: 1px solid rgba(40, 40, 60, 0.5);
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(80, 80, 150, 0.8);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(200, 200, 255, 0.6);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: #008080;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 16px 20px;
+            border-radius: 15px;
+            background-color: #080810;
+            min-height: 60px;
+            word-break: break-all;
+            border: 1px solid rgba(40, 40, 60, 0.5);
+            display: none;
+        }
+
+        #result a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        #result a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(80, 80, 100, 0.2);
+            border-top: 3px solid #4d68ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #ff7777;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .copy-btn {
+            background: rgba(60, 60, 120, 0.3);
+            border: 1px solid rgba(80, 80, 150, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            width: 100px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: none;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(70, 70, 150, 0.4);
+        }
+        
+        .copy-success {
+            color: #72ff72;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-info .welcome {
+            font-size: 0.95rem;
+            color: rgba(200, 200, 255, 0.8);
+        }
+
+        .user-info .welcome span {
+            color: white;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: #ff7777;
+            border: 1px solid rgba(255, 119, 119, 0.3);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 119, 119, 0.1);
+        }
+        
+        .token-status {
+            background-color: rgba(20, 20, 35, 0.7);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(40, 40, 60, 0.5);
+            text-align: center;
+        }
+        
+        .token-status.active {
+            border-color: rgba(0, 255, 128, 0.3);
+        }
+        
+        .token-status.inactive {
+            border-color: rgba(255, 119, 119, 0.3);
+        }
+        
+        .token-status p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .token-status p span {
+            font-weight: 500;
+        }
+        
+        .token-status a.get-token-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #3448f5, #7747ff);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-top: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .token-status a.get-token-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .clear-token-btn {
+            background: rgba(255, 119, 119, 0.2);
+            color: #ff7777;
+            border: 1px solid rgba(255, 119, 119, 0.3);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: auto;
+            margin-top: 10px;
+        }
+        
+        .clear-token-btn:hover {
+            background: rgba(255, 119, 119, 0.3);
+        }
+        
+        .tool-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-info">
+            <div class="welcome">Welcome, <span id="username">User</span></div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+        <h1>URL Checker</h1>
+        
+        <!-- Token status section -->
+        <div class="token-status" id="token-status">
+            <p>Checking token status...</p>
+        </div>
+        
+        <!-- URL checker tool container - only visible when token is active -->
+        <div class="tool-container" id="tool-container">
+            <div class="input-group">
+                <input type="text" id="urlInput" placeholder="https://seturl.in/VCUXC">
+            </div>
+            <button onclick="checkUrl()">Check URL</button>
+            <div class="loading" id="loading"></div>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const logoutMessage = urlParams.get('session_expired');
+            const tokenExpired = urlParams.get('token_expired');
+            const expiryTime = urlParams.get('time');
+            
+            if (logoutMessage === 'true') {
+                alert('You have been logged out because your account was logged in on another device.');
+            }
+            
+            // Show token expired message if present in URL
+            if (tokenExpired === 'true') {
+                const tokenStatusDiv = document.getElementById('token-status');
+                let expiryMessage = 'Your token has expired';
+                
+                if (expiryTime) {
+                    try {
+                        const expDate = new Date(expiryTime);
+                        const formatted = expDate.toLocaleString();
+                        expiryMessage = `Your token expired on ${formatted}`;
+                    } catch (e) {
+                        console.error('Error parsing date:', e);
+                    }
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = 'token-error';
+                notification.innerHTML = `
+                    <p><strong>Notice:</strong> ${expiryMessage}</p>
+                    <p>Please obtain a new token to use the service.</p>
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <a href="https://t.me/yourbotname" style="margin-right: 10px;" class="get-token-btn" target="_blank">Telegram Bot</a>
+                        <a href="/external-token" class="get-token-btn">Enter Token</a>
+                    </div>
+                `;
+                
+                // Add the notification to the page
+                if (!document.querySelector('.token-error')) {
+                    tokenStatusDiv.appendChild(notification);
+                }
+            }
+            
+            // Get username from session
+            const username = "{{ session.username }}";
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+            
+            // Check token status immediately on page load
+            checkTokenStatus();
+            
+            // Also validate token to immediately handle expiration
+            validateTokenOnReturn();
+            
+            // Add visibility change detection
+            setupVisibilityDetection();
+        });
+        
+        // Setup visibility change detection to validate token when user returns to the page
+        function setupVisibilityDetection() {
+            let hiddenTime = null;
+            
+            // Listen for visibility change events
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Page is now hidden, store the timestamp
+                    hiddenTime = new Date();
+                } else {
+                    // Page is now visible again
+                    if (hiddenTime) {
+                        const timeAwayMs = new Date() - hiddenTime;
+                        // If user was away for more than 1 hour, check token status
+                        if (timeAwayMs > 3600000) { // 1 hour in milliseconds
+                            checkTokenStatus();
+                            validateTokenOnReturn();
+                        }
+                    }
+                    hiddenTime = null;
+                }
+            });
+        }
+        
+        // Validate token when user returns to the site
+        async function validateTokenOnReturn() {
+            try {
+                const response = await fetch('/validate-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                const tokenStatusDiv = document.getElementById('token-status');
+                
+                // If token is invalid or expired, show notification
+                if (!data.has_token) {
+                    // Check if user previously had a token (using localStorage)
+                    const hadTokenBefore = localStorage.getItem('had_token') === 'true';
+                    const lastCheckTime = localStorage.getItem('token_last_check');
+                    const currentTime = new Date().getTime();
+                    
+                    // Only show notification if user had a token before and hasn't seen this notification recently
+                    if (hadTokenBefore && (!lastCheckTime || (currentTime - parseInt(lastCheckTime)) > 300000)) { // 5 minutes
+                        // Show expired token notification
+                        const notification = document.createElement('div');
+                        notification.className = 'token-error';
+                        notification.innerHTML = `
+                            <p><strong>Notice:</strong> Your token has expired while you were away.</p>
+                            <p>Please obtain a new token to continue using the service.</p>
+                            <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                                <a href="https://t.me/yourbotname" style="margin-right: 10px;" class="get-token-btn" target="_blank">Telegram Bot</a>
+                                <a href="/external-token" class="get-token-btn">Enter Token</a>
+                            </div>
+                        `;
+                        
+                        // Add the notification to the page
+                        if (!document.querySelector('.token-error')) {
+                            tokenStatusDiv.appendChild(notification);
+                        }
+                        
+                        // Reset the hadToken flag
+                        localStorage.removeItem('had_token');
+                        
+                        // Update last check time
+                        localStorage.setItem('token_last_check', currentTime.toString());
+                    }
+                } else {
+                    // User has valid token, set flag in localStorage
+                    localStorage.setItem('had_token', 'true');
+                    
+                    // Remove any existing token error notification
+                    const tokenError = document.querySelector('.token-error');
+                    if (tokenError) {
+                        tokenError.remove();
+                    }
+                }
+            } catch (error) {
+                console.error('Error validating token on return:', error);
+            }
+        }
+        
+        // Check if the user has a valid token
+        async function checkTokenStatus() {
+            const tokenStatusDiv = document.getElementById('token-status');
+            const toolContainer = document.getElementById('tool-container');
+            
+            try {
+                const response = await fetch('/validate-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.has_token) {
+                    // User has a valid token
+                    const expiresDate = new Date(data.expires_at);
+                    const formattedDate = expiresDate.toLocaleString();
+                    
+                    // Check if token is about to expire (less than 24 hours)
+                    const now = new Date();
+                    const hoursRemaining = Math.round((expiresDate - now) / (1000 * 60 * 60));
+                    const minutesRemaining = Math.round((expiresDate - now) / (1000 * 60)) % 60;
+                    
+                    let expiryWarning = '';
+                    if (hoursRemaining < 24) {
+                        // Format the remaining time
+                        let timeDisplay = '';
+                        if (hoursRemaining > 0) {
+                            timeDisplay += `${hoursRemaining} hour${hoursRemaining > 1 ? 's' : ''}`;
+                        }
+                        if (minutesRemaining > 0 || hoursRemaining === 0) {
+                            timeDisplay += `${hoursRemaining > 0 ? ' and ' : ''}${minutesRemaining} minute${minutesRemaining > 1 ? 's' : ''}`;
+                        }
+                        
+                        expiryWarning = `
+                            <div class="token-warning">
+                                <p><strong>Warning:</strong> Your token will expire in ${timeDisplay}.</p>
+                                <p>Be prepared to get a new token soon.</p>
+                            </div>
+                        `;
+                        
+                        // Setup auto-refresh countdown for token status
+                        startExpiryCountdown(expiresDate);
+                    }
+                    
+                    tokenStatusDiv.className = 'token-status active';
+                    tokenStatusDiv.innerHTML = `
+                        <p>Status: <span style="color: #72ff72;">Active</span></p>
+                        <p>Your token is active and ready to use</p>
+                        ${expiryWarning}
+                        <button onclick="clearToken()" class="clear-token-btn">Remove Token</button>
+                    `;
+                    
+                    // Show the URL checker tool
+                    toolContainer.style.display = 'block';
+                } else {
+                    // User does not have a valid token
+                    tokenStatusDiv.className = 'token-status inactive';
+                    tokenStatusDiv.innerHTML = `
+                        <p>Status: <span style="color: #ff7777;">Inactive</span></p>
+                        <p>You need an access token to use the URL Checker</p>
+                        <p>Get a token from our Telegram bot:</p>
+                        <a href="https://t.me/yourbotname" class="get-token-btn" target="_blank">Telegram Bot</a>
+                        <p style="margin-top: 10px;">Or enter your token:</p>
+                        <a href="/external-token" class="get-token-btn">Enter Token</a>
+                    `;
+                    
+                    // Hide the URL checker tool
+                    toolContainer.style.display = 'none';
+                }
+            } catch (error) {
+                tokenStatusDiv.className = 'token-status inactive';
+                tokenStatusDiv.innerHTML = `
+                    <p>Error checking token status</p>
+                    <a href="/external-token" class="get-token-btn">Enter Token</a>
+                `;
+                
+                // Hide the URL checker tool
+                toolContainer.style.display = 'none';
+            }
+        }
+
+        // Allow pressing Enter to submit
+        const urlInput = document.getElementById('urlInput');
+        urlInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkUrl();
+            }
+        });
+        
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const copySuccess = document.querySelector('.copy-success');
+                copySuccess.style.display = 'block';
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                }, 2000);
+            });
+        }
+        
+        // Setup countdown timer for token expiration
+        let expiryCountdownInterval = null;
+        function startExpiryCountdown(expiresDate) {
+            // Clear any existing interval
+            if (expiryCountdownInterval) {
+                clearInterval(expiryCountdownInterval);
+            }
+            
+            // Set interval to update every minute
+            expiryCountdownInterval = setInterval(() => {
+                const now = new Date();
+                const timeRemaining = expiresDate - now;
+                
+                // If expired or less than a minute remaining
+                if (timeRemaining <= 60000) {
+                    clearInterval(expiryCountdownInterval);
+                    checkTokenStatus(); // Refresh token status
+                    return;
+                }
+                
+                // Update the warning message
+                const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutesRemaining = Math.floor((timeRemaining / (1000 * 60)) % 60);
+                
+                // Format the time display
+                let timeDisplay = '';
+                if (hoursRemaining > 0) {
+                    timeDisplay += `${hoursRemaining} hour${hoursRemaining > 1 ? 's' : ''}`;
+                }
+                if (minutesRemaining > 0 || hoursRemaining === 0) {
+                    timeDisplay += `${hoursRemaining > 0 ? ' and ' : ''}${minutesRemaining} minute${minutesRemaining > 1 ? 's' : ''}`;
+                }
+                
+                // Find and update the warning element
+                const warningElement = document.querySelector('.token-warning p strong');
+                if (warningElement && warningElement.nextSibling) {
+                    warningElement.nextSibling.textContent = ` Your token will expire in ${timeDisplay}.`;
+                }
+                
+                // If less than 1 hour remaining, add urgent class
+                const warningDiv = document.querySelector('.token-warning');
+                if (warningDiv && hoursRemaining < 1) {
+                    warningDiv.classList.add('urgent');
+                }
+            }, 60000); // Update every minute
+        }
+        
+        async function checkUrl() {
+            const urlInput = document.getElementById('urlInput');
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            if (!urlInput.value) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<div class="error">Please enter a URL</div>';
+                return;
+            }
+
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/check_url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: urlInput.value })
+                });
+
+                const data = await response.json();
+                resultDiv.style.display = 'block';
+                
+                // Check for token-related errors
+                if (response.status === 401) {
+                    if (data.code === 'NO_TOKEN' || data.code === 'INVALID_TOKEN' || data.code === 'EXPIRED_TOKEN') {
+                        // Show specific error message if present
+                        const errorMessage = data.message || data.error || 'Token validation failed';
+                        
+                        let tokenErrorHtml = `
+                            <div class="error">${errorMessage}</div>
+                        `;
+                        
+                        // Show different UI for expired tokens
+                        if (data.code === 'EXPIRED_TOKEN') {
+                            tokenErrorHtml += `
+                                <p style="margin-top: 10px; text-align: center;">Your token has expired. Please get a new one.</p>
+                                <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                                    <a href="https://t.me/yourbotname" style="margin-right: 10px;" class="get-token-btn" target="_blank">Telegram Bot</a>
+                                    <a href="/external-token" class="get-token-btn">Enter Token</a>
+                                </div>
+                            `;
+                        } else {
+                            tokenErrorHtml += `
+                                <button onclick="window.location.href='/external-token'" style="margin-top: 1rem;">Get Token</button>
+                            `;
+                        }
+                        
+                        resultDiv.innerHTML = tokenErrorHtml;
+                        
+                        // Refresh token status
+                        checkTokenStatus();
+                        return;
+                    }
+                }
+                
+                if (data.result && (data.result.includes('Something went wrong') || data.result.includes('No form data found') || data.result.includes('URL not supported'))) {
+                    resultDiv.innerHTML = `
+                        <div class="error">${data.result}</div>
+                        <button onclick="checkUrl()" style="margin-top: 1rem;">Try Again</button>
+                    `;
+                } else if (data.result) {
+                    resultDiv.innerHTML = `
+                        <a href="${data.result}" target="_blank">${data.result}</a>
+                        <button class="copy-btn" onclick="copyToClipboard('${data.result}')">Copy URL</button>
+                        <div class="copy-success">URL copied to clipboard!</div>
+                    `;
+                    // Show copy button
+                    document.querySelector('.copy-btn').style.display = 'block';
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">Invalid response format</div>
+                        <button onclick="checkUrl()" style="margin-top: 1rem;">Try Again</button>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <div class="error">An error occurred. Please try again.</div>
+                    <button onclick="checkUrl()" style="margin-top: 1rem;">Try Again</button>
+                `;
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        async function clearToken() {
+            if (!confirm('Are you sure you want to remove your token? You will need to get a new one to use the URL checker.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/clear-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    // Refresh token status
+                    checkTokenStatus();
+                } else {
+                    alert('Failed to clear token. Please try again.');
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 
