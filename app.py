@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 import cfscrape
 from bs4 import BeautifulSoup
 import time
@@ -298,6 +298,10 @@ def Modijiurl_in1(url, delay=0):
         return str(r.json()["url"])
     except BaseException:
         return "Something went wrong :("
+
+@app.route('/df23f4804728c1758e845ea2c052adde9c199fff.html')
+def hilltop_verification():
+    return "df23f4804728c1758e845ea2c052adde9c199fff"
 
 @app.route('/')
 @login_required
