@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="df23f4804728c1758e845ea2c052adde9c199fff" content="df23f4804728c1758e845ea2c052adde9c199fff" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
     <title>URL Checker</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -179,6 +181,25 @@
             text-align: center;
             display: none;
         }
+        
+        /* Ad Container Styles */
+        .ad-container {
+            margin-top: 2rem;
+            width: 100%;
+            min-height: 250px;
+            background-color: #080810;
+            border-radius: 15px;
+            border: 1px solid rgba(40, 40, 60, 0.5);
+            padding: 10px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .ad-container p {
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: rgba(200, 200, 255, 0.6);
+        }
 
         .user-info {
             display: flex;
@@ -298,8 +319,29 @@
             <button onclick="checkUrl()">Check URL</button>
             <div class="loading" id="loading"></div>
             <div id="result"></div>
+            
+            <!-- Ad Container for HillTopAds -->
+            <div class="ad-container" id="ad-container">
+                <p>Advertisement</p>
+                <!-- HillTopAds video ad will be placed here -->
+                <div id="htads-video-container"></div>
+            </div>
         </div>
     </div>
+
+    <!-- HillTopAds Script -->
+    <script src="https://hilltopads.com/player/video.js" async></script>
+    <script>
+        window.htads = window.htads || {};
+        htads.que = htads.que || [];
+        htads.que.push(function() {
+            htads.video('htads-video-container', {
+                zone: 'YOUR_ZONE_ID_HERE',  // Replace with your actual zone ID from HillTopAds
+                width: '100%',
+                height: '250px'
+            });
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

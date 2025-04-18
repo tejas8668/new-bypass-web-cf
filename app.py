@@ -134,7 +134,6 @@ def Runurl_in1(url, delay=0):
     code = url.split("/")[-1]
     final_url = f"{DOMAIN}/{code}"
     ref = "https://loan.newsaddapro.in/"
-    ref = referurl
     h = {"referer": ref}
     resp = client.get(final_url, headers=h)
     soup = BeautifulSoup(resp.content, "html.parser")
@@ -154,7 +153,7 @@ def Seturl_in(url, retry=False):
     url = url[:-1] if url[-1] == "/" else url
     code = url.split("/")[-1]
     final_url = f"{DOMAIN}/{code}"
-    ref = "https://loan.techzed.in/"  # Referrer URL
+    ref = "https://gujtrend.in/"  # Referrer URL
     h_get = {"referer": ref}
 
     try:
@@ -210,8 +209,7 @@ def Seturl_in1(url, delay=0):
     url = url[:-1] if url[-1] == "/" else url
     code = url.split("/")[-1]
     final_url = f"{DOMAIN}/{code}"
-    ref = "https://loan.techzed.in/"
-    ref = referurl
+    ref = "https://paisa-king.com/"
     h = {"referer": ref}
     resp = client.get(final_url, headers=h)
     soup = BeautifulSoup(resp.content, "html.parser")
